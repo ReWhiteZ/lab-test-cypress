@@ -12,9 +12,9 @@
 
 ## สร้างโปรเจกต์จากศูนย์
 
-```powershell
+```cmd
 mkdir cypress-e2e-tests
-cd cypress-e2e-tests
+cd /d cypress-e2e-tests
 npm init -y
 npm install --save-dev cypress
 ```
@@ -72,7 +72,7 @@ cypress-e2e-tests/
 
 ติดตั้ง dependencies จาก lockfile และรัน Cypress:
 
-```powershell
+```cmd
 npm ci
 npx cypress open
 npx cypress run
@@ -104,7 +104,7 @@ npx cypress run
 
 ### คำสั่งที่ใช้บ่อย
 
-```powershell
+```cmd
 npm ci
 npx cypress open       # เลือก browser และ spec ผ่านหน้าต่าง Cypress
 npx cypress run        # รันทุก spec จาก command line
@@ -124,3 +124,4 @@ npx cypress run --spec "cypress/e2e/smoke.cy.js"
 - [Cypress: Your first end-to-end test](https://docs.cypress.io/app/end-to-end-testing/writing-your-first-end-to-end-test)
 - [Cypress: Assertions](https://docs.cypress.io/app/references/assertions)
 - [Cypress: Configuration](https://docs.cypress.io/app/references/configuration)
+
