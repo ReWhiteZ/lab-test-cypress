@@ -88,3 +88,39 @@ npx cypress run
 - ใช้ selector ที่เสถียร เช่น `data-test` แทน class สำหรับตกแต่งหน้า
 - หลีกเลี่ยงการพึ่ง state ที่เหลือจาก spec อื่น เพื่อให้แต่ละ test ทำซ้ำได้
 - เก็บข้อมูลทดสอบไว้ใน fixture หรือ configuration ตามความเหมาะสม และอย่า commit secret จริง
+
+## เปิดดูระหว่างสอบ: ทางลัดและภาพรวมไฟล์นี้
+
+โครงสร้างคือ `describe()` จัดกลุ่ม, `it()` ระบุกรณี, `cy.visit()` เปิดหน้า, `cy.get()`/`cy.contains()` หา element, action เช่น `.click()`/`.type()` และ assertion เช่น `.should()`. `baseUrl` ใน config ช่วยให้ `cy.visit('/')` สั้นลง
+
+ไฟล์ทดสอบปัจจุบัน:
+
+| ไฟล์ | สิ่งที่แสดงให้ดู |
+|---|---|
+| `smoke.cy.js` | เปิดหน้า, login และตรวจ URL กับ heading |
+| `checkout-flow.cy.js` | แสดงการ sort, อ่านราคา, ตรวจ cart, กรอก checkout และตรวจผลรวม/ข้อความจบ |
+
+ข้อควรจำ: `checkout-flow.cy.js` ตั้ง `testIsolation: false` และใช้ `before()` เตรียม session ร่วมกันระหว่าง test จึงอาศัยลำดับ/state ที่แชร์อยู่ หากเขียน test ใหม่สำหรับงานอื่น ให้เริ่มจาก test ที่ทำงานอิสระและทำซ้ำได้ โดยค่าเริ่มต้น Cypress เปิด isolation ให้แต่ละ test
+
+### คำสั่งที่ใช้บ่อย
+
+```powershell
+npm ci
+npx cypress open       # เลือก browser และ spec ผ่านหน้าต่าง Cypress
+npx cypress run        # รันทุก spec จาก command line
+npx cypress run --spec "cypress/e2e/smoke.cy.js"
+```
+
+### เมื่อเจอปัญหา
+
+- `cy.visit('/')` เปิดผิด host: ตรวจ `baseUrl` ใน `cypress.config.js`
+- query หา element ไม่เจอ: ตรวจ selector และให้ Cypress retry ผ่าน `.should()` แทน fixed wait
+- state จาก test ก่อนหน้ามีผล: เปิด test isolation หรือเตรียม state ใหม่ในแต่ละ `it()`
+- รันจาก command line แล้วหา browser ไม่เจอ: ตรวจ browser ที่ Cypress รองรับและลอง `npx cypress open` เพื่อเลือก browser ที่ติดตั้งไว้
+
+### เอกสารอ้างอิงขณะสอบ
+
+- [Cypress: Writing and organizing tests](https://docs.cypress.io/app/core-concepts/writing-and-organizing-tests)
+- [Cypress: Your first end-to-end test](https://docs.cypress.io/app/end-to-end-testing/writing-your-first-end-to-end-test)
+- [Cypress: Assertions](https://docs.cypress.io/app/references/assertions)
+- [Cypress: Configuration](https://docs.cypress.io/app/references/configuration)
