@@ -1,0 +1,90 @@
+# Lab 06 — Cypress กับ JavaScript
+
+คู่มือเริ่มโปรเจกต์ Cypress สำหรับ end-to-end browser test ตั้งแต่สร้างโปรเจกต์ Node.js และอธิบายพื้นฐานการเขียน spec ด้วย Cypress โดยไม่ยึดกับโจทย์เฉพาะ
+
+## สิ่งที่ต้องมี
+
+- Node.js เวอร์ชันที่รองรับโดย Cypress (แนะนำ LTS ปัจจุบัน)
+- npm ซึ่งติดตั้งมาพร้อม Node.js
+- ระบบปฏิบัติการและ browser ที่ Cypress รองรับ
+
+ตรวจสอบด้วย `node --version` และ `npm --version`
+
+## สร้างโปรเจกต์จากศูนย์
+
+```powershell
+mkdir cypress-e2e-tests
+cd cypress-e2e-tests
+npm init -y
+npm install --save-dev cypress
+```
+
+เพิ่ม scripts ใน `package.json` เพื่อเรียก Cypress ได้ง่าย:
+
+```json
+{
+  "scripts": {
+    "cy:open": "cypress open",
+    "cy:run": "cypress run"
+  }
+}
+```
+
+สร้าง configuration และโครงสร้าง spec. เปิด Cypress GUI ครั้งแรกด้วย `npx cypress open` เพื่อให้ wizard สร้างไฟล์เริ่มต้นได้ หรือสร้าง `cypress/e2e/example.cy.js` ด้วยตนเอง
+
+ตัวอย่าง spec:
+
+```javascript
+describe('Example page', () => {
+  it('shows the expected heading', () => {
+    cy.visit('https://example.com');
+    cy.get('h1').should('have.text', 'Example Domain');
+  });
+});
+```
+
+## โครงสร้างโปรเจกต์ตัวอย่าง
+
+```text
+cypress-e2e-tests/
+├── cypress/
+│   ├── e2e/                 # ไฟล์ spec ลงท้าย .cy.js
+│   ├── fixtures/            # ข้อมูลตัวอย่างที่ spec โหลดใช้
+│   └── support/             # custom commands และ setup ที่ใช้ร่วมกัน
+├── cypress.config.js
+├── package.json
+└── package-lock.json
+```
+
+`cypress.config.js` ใช้ตั้งค่าเช่น `baseUrl`, viewport และพฤติกรรมตอนทดสอบ ส่วน `package-lock.json` บันทึก dependency versions และควร commit ทั้งสองไฟล์
+
+## หลักการเขียน Cypress test
+
+- ใช้ `describe()` จัดกลุ่ม spec และ `it()` ระบุพฤติกรรมที่ทดสอบ
+- `cy.visit()` เปิดหน้า และ `cy.get()`/`cy.contains()` หา element
+- ต่อ action เช่น `.click()`, `.type()` และ `.select()` เข้ากับ command chain
+- Cypress retry คำสั่ง query และ assertion ตาม timeout โดยอัตโนมัติ จึงหลีกเลี่ยง `cy.wait(คงที่)` เมื่อรอ element ได้
+- ใช้ `.should()` หรือ Chai `expect()` ตรวจผล เช่น ข้อความ, URL หรือจำนวน element
+- command ภายใน `cy.get(...).then(...)` เหมาะกับการอ่านค่าจาก DOM และคำนวณต่อ คำสั่ง Cypress ควรรันผ่าน command chain
+- ย้ายขั้นตอนซ้ำไป custom command ใน `cypress/support/commands.js` เมื่อเหมาะสม
+
+## ติดตั้งและรันโปรเจกต์นี้
+
+ติดตั้ง dependencies จาก lockfile และรัน Cypress:
+
+```powershell
+npm ci
+npx cypress open
+npx cypress run
+```
+
+`npm ci` ใช้ติดตั้งตาม `package-lock.json`; `cypress open` เปิด GUI ให้เลือก browser/spec; `cypress run` รันแบบ headless จาก command line
+
+ในโปรเจกต์นี้ `baseUrl` ตั้งเป็น `https://www.saucedemo.com` แล้ว จึงใช้ `cy.visit('/')` ใน spec ได้ หากจะทดสอบระบบอื่น เปลี่ยน `baseUrl` ใน `cypress.config.js`
+
+## แนวทางที่ควรทำ
+
+- แยก spec ตาม feature หรือพฤติกรรมที่ตรวจ
+- ใช้ selector ที่เสถียร เช่น `data-test` แทน class สำหรับตกแต่งหน้า
+- หลีกเลี่ยงการพึ่ง state ที่เหลือจาก spec อื่น เพื่อให้แต่ละ test ทำซ้ำได้
+- เก็บข้อมูลทดสอบไว้ใน fixture หรือ configuration ตามความเหมาะสม และอย่า commit secret จริง
