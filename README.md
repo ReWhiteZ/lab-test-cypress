@@ -16,21 +16,18 @@
 mkdir cypress-e2e-tests
 cd /d cypress-e2e-tests
 npm init -y
-npm install --save-dev cypress
+npm install cypress
 ```
 
-เพิ่ม scripts ใน `package.json` เพื่อเรียก Cypress ได้ง่าย:
+ตรวจ Cypress และสร้างโฟลเดอร์สำหรับ spec:
 
-```json
-{
-  "scripts": {
-    "cy:open": "cypress open",
-    "cy:run": "cypress run"
-  }
-}
+```cmd
+npx cypress --version
+mkdir cypress
+mkdir cypress\e2e
 ```
 
-สร้าง configuration และโครงสร้าง spec. เปิด Cypress GUI ครั้งแรกด้วย `npx cypress open` เพื่อให้ wizard สร้างไฟล์เริ่มต้นได้ หรือสร้าง `cypress/e2e/example.cy.js` ด้วยตนเอง
+จากนั้นสร้าง `cypress.config.js` และไฟล์ `cypress/e2e/example.cy.js` ด้วยตนเองตามตัวอย่างด้านล่าง
 
 ตัวอย่าง spec:
 
